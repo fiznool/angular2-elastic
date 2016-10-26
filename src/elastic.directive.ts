@@ -58,7 +58,6 @@ export class ElasticDirective {
   }
 
   adjust(): void {
-    this.textareaEl.style.height = 'auto';
     this.textareaEl.style.height = this.textareaEl.scrollHeight + "px";
   }
 }
