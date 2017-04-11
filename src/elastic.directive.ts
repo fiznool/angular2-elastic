@@ -25,7 +25,7 @@ export class ElasticDirective {
     Observable.fromEvent(window, 'resize')
       .debounceTime(250)
       .distinctUntilChanged((evt:any) => evt.timeStamp)
-      .subscribe(() => this.adjust());
+      .subscribe(() => this.adjust(true));
   }
 
   ngAfterViewInit() {
@@ -46,15 +46,17 @@ export class ElasticDirective {
 
   @HostListener('input')
   onInput(): void {
-    this.adjust();
+    this.adjust(true);
   }
 
   ngAfterViewChecked(): void {
-    this.adjust();
+    this.adjust(false);
   }
 
-  adjust(): void {
-    this.textareaEl.style.height = 'auto';
-    this.textareaEl.style.height = this.textareaEl.scrollHeight + "px";
+  adjust(force: boolean): void {
+    if (force || this.textareaEl.style.height !== `${this.textareaEl.scrollHeight}px`) {
+      this.textareaEl.style.height = 'auto';
+      this.textareaEl.style.height = this.textareaEl.scrollHeight + "px";
+    }
   }
 }
