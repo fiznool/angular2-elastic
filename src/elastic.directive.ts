@@ -9,15 +9,16 @@ import { Observable, Subscription } from 'rxjs/Rx';
 export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
   private modelSub: Subscription;
   private textareaEl: HTMLTextAreaElement;
+  private totalVerticalPadding = 0;
 
   constructor(
     private element: ElementRef,
     private ngZone: NgZone,
     @Optional() private model: NgModel
-  ) {}
+  ) { }
 
   ngOnInit() {
-    if(!this.model) {
+    if (!this.model) {
       return;
     }
 
@@ -30,7 +31,7 @@ export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
   }
 
   ngOnDestroy() {
-    if(this.modelSub) {
+    if (this.modelSub) {
       this.modelSub.unsubscribe();
     }
   }
@@ -64,6 +65,10 @@ export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
   private setupTextarea(textareaEl: HTMLTextAreaElement) {
     this.textareaEl = textareaEl;
 
+    const paddingTop = window.getComputedStyle(this.textareaEl).getPropertyValue('padding-top').replace('px', '');
+    const paddingBottom = window.getComputedStyle(this.textareaEl).getPropertyValue('padding-bottom').replace('px', '');
+    this.totalVerticalPadding = +paddingTop + +paddingBottom;
+
     // Set some necessary styles
     const style = this.textareaEl.style;
     style.overflow = 'hidden';
@@ -87,6 +92,6 @@ export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
     }
 
     this.textareaEl.style.height = 'auto';
-    this.textareaEl.style.height = this.textareaEl.scrollHeight + "px";
+    this.textareaEl.style.height = this.textareaEl.scrollHeight - this.totalVerticalPadding + "px";
   }
 }
