@@ -88,10 +88,14 @@ export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    const previousHeight:number = parseInt(this.textareaEl.style.height);
+
     this.textareaEl.style.height = 'auto';
     this.textareaEl.style.height = this.textareaEl.scrollHeight + "px";
 
-    // send resize event
-    this.onResize.emit(this.textareaEl.scrollHeight);
+    if (previousHeight !== this.textareaEl.scrollHeight  ) {
+      // send resize event
+      this.onResize.emit(this.textareaEl.scrollHeight);
+    }
   }
 }
