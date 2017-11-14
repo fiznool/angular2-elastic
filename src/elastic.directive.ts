@@ -1,4 +1,4 @@
-import { ElementRef, HostListener, Directive, AfterViewInit, Optional, OnInit, OnDestroy, NgZone } from '@angular/core';
+import { ElementRef, HostListener, Directive, AfterViewInit, Optional, OnInit, OnDestroy, NgZone, Output, EventEmitter } from '@angular/core';
 import { NgModel } from '@angular/forms';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
@@ -12,6 +12,8 @@ import { Subscription } from 'rxjs/Subscription';
 export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
   private modelSub: Subscription;
   private textareaEl: HTMLTextAreaElement;
+
+  @Output('on-resize') onResize = new EventEmitter();
 
   constructor(
     private element: ElementRef,
@@ -89,7 +91,14 @@ export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
       return;
     }
 
+    const previousHeight:number = parseInt(this.textareaEl.style.height);
+
     this.textareaEl.style.height = 'auto';
     this.textareaEl.style.height = this.textareaEl.scrollHeight + "px";
+
+    if (previousHeight !== this.textareaEl.scrollHeight  ) {
+      // send resize event
+      this.onResize.emit(this.textareaEl.scrollHeight);
+    }
   }
 }
