@@ -1,5 +1,5 @@
 import { ElementRef, HostListener, Directive, AfterViewInit, Optional, OnInit, OnDestroy, NgZone, Output, EventEmitter } from '@angular/core';
-import { NgModel } from '@angular/forms';
+import { NgModel, FormControlName } from '@angular/forms';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/operator/debounceTime';
 import { Observable } from 'rxjs/Observable';
@@ -18,17 +18,18 @@ export class ElasticDirective implements OnInit, OnDestroy, AfterViewInit {
   constructor(
     private element: ElementRef,
     private ngZone: NgZone,
-    @Optional() private model: NgModel
+    @Optional() private model: NgModel,
+    @Optional() private formCtrlName: FormControlName
   ) {}
 
   ngOnInit() {
-    if(!this.model) {
+    if(!this.model && !this.formCtrlName) {
       return;
     }
 
     // Listen for changes to the underlying model
     // to adjust the textarea size.
-    this.modelSub = this.model
+    this.modelSub = (this.model ? this.model : this.formCtrlName)
       .valueChanges
       .debounceTime(100)
       .subscribe(() => this.adjust());
